@@ -1,8 +1,9 @@
 package wakeme;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -23,7 +24,7 @@ public class Activator extends Plugin implements IStartup {
   private static Activator plugin;
 
   private EclipseState _eclipseState = new EclipseState();
-  private SoundNotifier _notifier = new SoundNotifier(_eclipseState);
+  private SoundNotifier _notifier;
 
   /*
    * (non-Javadoc)
@@ -32,33 +33,26 @@ public class Activator extends Plugin implements IStartup {
    * org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
    */
   public void start(BundleContext context) throws Exception {
-    System.out.println("Activator.start()");
     super.start(context);
+    log("wake");
+    // log(Platform.find(getBundle(), new Path("plugin.xml")));
+    // log(Platform.find(getBundle(), new Path("sound/debug_suspend.wav")));
+    // log(Platform.find(getBundle(), new Path("/sound/debug_suspend.wav")));
+    // log(context.getBundle().getResource("/sound/debug_suspend.wav"));
+
     plugin = this;
+    _notifier = new SoundNotifier(context.getBundle(), _eclipseState);
     IWorkbench workbench = PlatformUI.getWorkbench();
     workbench.addWindowListener(_eclipseState);
     DebugPlugin.getDefault().addDebugEventListener(new LaunchEventListener(_notifier));
-    ILaunchManager lm = DebugPlugin.getDefault().getLaunchManager();
-    // lm.addLaunchListener(new ILaunchesListener() {
-    //
-    // @Override
-    // public void launchesRemoved(ILaunch[] launches) {
-    // System.out
-    // .println("Activator.start(...).new ILaunchesListener() {...}.launchesRemoved()");
-    // }
-    //
-    // @Override
-    // public void launchesChanged(ILaunch[] launches) {
-    // System.out
-    // .println("Activator.start(...).new ILaunchesListener() {...}.launchesChanged()");
-    // }
-    //
-    // @Override
-    // public void launchesAdded(ILaunch[] launches) {
-    // System.out
-    // .println("Activator.start(...).new ILaunchesListener() {...}.launchesAdded()");
-    // }
-    // });
+  }
+
+  private void log(Object message) {
+    if (message == null) {
+      message = "null";
+    }
+    System.out.println(message.toString());
+    getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message.toString()));
   }
 
   /*
@@ -82,7 +76,6 @@ public class Activator extends Plugin implements IStartup {
 
   @Override
   public void earlyStartup() {
-    System.out.println("Activator.earlyStartup()");
     getBundle();
   }
 

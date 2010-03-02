@@ -11,16 +11,19 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
 
 import wakeme.EclipseState;
 import wakeme.NotificationType;
 
 public class SoundNotifier {
 
+  private final Bundle _bundle;
   private final EclipseState _eclipseState;
   private Map<NotificationType, AudioClip> _audioClipByNotificationType = new HashMap<NotificationType, AudioClip>();
 
-  public SoundNotifier(EclipseState eclipseState) {
+  public SoundNotifier(Bundle bundle, EclipseState eclipseState) {
+    _bundle = bundle;
     _eclipseState = eclipseState;
     for (NotificationType notificationType : NotificationType.values()) {
       AudioClip audioClip = Applet.newAudioClip(getSoundUrl(notificationType.name().toLowerCase()));
@@ -29,15 +32,13 @@ public class SoundNotifier {
   }
 
   private URL getSoundUrl(String soundName) {
-    URL url = getClass().getResource("/sound/" + soundName + ".wav");
+    URL url = _bundle.getResource("/sound/" + soundName + ".wav");
     if (url == null)
       throw new Error("sound " + soundName + " not found");
     return url;
   }
 
   public void notify(NotificationType notificationType) {
-    // System.out.println("SoundNotifier.notify()" + notificationType + " / " +
-    // _eclipseState.hasFocus());
     if (_eclipseState.hasFocus()) {
       // do nothing
       return;
@@ -68,6 +69,7 @@ public class SoundNotifier {
         }
       }
     };
+    // Display.getDefault().asyncExec(r);
     async(r);
   }
 
@@ -78,13 +80,13 @@ public class SoundNotifier {
     }
   }
 
-  public static void main(String[] args) {
-    EclipseState eclipseState = new EclipseState();
-    eclipseState.windowDeactivated(null);
-    SoundNotifier soundNotifier = new SoundNotifier(eclipseState);
-    for (NotificationType notificationType : NotificationType.values()) {
-      soundNotifier.notify(notificationType);
-    }
-  }
+  // public static void main(String[] args) {
+  // EclipseState eclipseState = new EclipseState();
+  // eclipseState.windowDeactivated(null);
+  // SoundNotifier soundNotifier = new SoundNotifier(eclipseState);
+  // for (NotificationType notificationType : NotificationType.values()) {
+  // soundNotifier.notify(notificationType);
+  // }
+  // }
 
 }
