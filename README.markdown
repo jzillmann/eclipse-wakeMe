@@ -21,16 +21,19 @@ FEATURES
 BACKGROUD
 =====
 Do you know this situation ? <br>
+<pre>
 You trigger a junit test in eclipse which usual runtime is about a couple of minutes.
 You start doing other things in the meantime.<br>
 Now you start switching forth and back between eclipse - looking if the test is already terminated - and doing other things.<br>
 Or you take your time and then you look at eclipse after minutes only to realise that the test already crashed several seconds after starting it.
+</pre>
 <br>In this kind of cases eclipse-wakeMe helps ;)
 
 
 HOW TO INSTALL
 =====
 + [download](http://github.com/jzillmann/eclipse-wakeMe/downloads) jar to the dropin folder of eclipse
++ restart eclipse
 
 
 IDEAS FOR POSSIBLE FUTURE VERSIONS
